@@ -1,9 +1,9 @@
-# main.py
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import pandas as pd
 
+# Import utilitas dan data
 from utils import load_data, prepare_time_series, detect_frequency
 from stored_data import stored_data
 
@@ -19,6 +19,7 @@ from forecasting import router as forecast_router
 from pydantic import BaseModel
 from typing import Optional
 
+# Inisialisasi aplikasi FastAPI
 app = FastAPI()
 
 # Middleware CORS
@@ -29,6 +30,25 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# 🔷 Endpoint root untuk Railway health check
+@app.get("/")
+def read_root():
+    return {
+        "status": "ok",
+        "message": "FastAPI is running on Railway",
+        "available_routes": [
+            "/upload",
+            "/set-columns",
+            "/overview",
+            "/ai-insights",
+            "/decomposition",
+            "/anomalies",
+            "/calendar",
+            "/features",
+            "/forecast"
+        ]
+    }
 
 # Pydantic model untuk /set-columns
 class ColumnSelection(BaseModel):
